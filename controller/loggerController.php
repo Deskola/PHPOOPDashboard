@@ -21,13 +21,15 @@ class LoggerImp implements Crud
 		return $instance;
 	}	
 
-	//solution functions
-	public function createSolution($title,$subid,$descrip,$soln){
+	//////////////////////////////////////////////////////////////////
+	///////////////////////// SOLUTIONS ///////////////////////////////
+	/// ////////////////////////////////////////////////////////////
+	public function createSolution($title,$subid,$descrip,$soln,$ref){
 		$dbconn = $this->dbConnect();
 
 		$currentTime = date("Y-m-d H:i:s");
 		$updateTime = $currentTime;
-		$query = "INSERT INTO solution(title,subserviceid,problemDescription,solution,createdAt,updatedAt) VALUES('$title','$subid','$descrip','$soln','$currentTime','$updateTime')";
+		$query = "INSERT INTO solution(title,subserviceid,problemDescription,providesolution,ref,createdAt,updatedAt) VALUES('$title','$subid','$descrip','$soln','$ref','$currentTime','$updateTime')";
 
 		$results = mysqli_query($dbconn, $query) or die("Error".mysqli_error($dbconn));
 
@@ -40,13 +42,37 @@ class LoggerImp implements Crud
 		$results = mysqli_query($dbconn, $query) or die("Error".mysqli_error($dbconn));		
 
 		return $results;
-	}	
-	public function readSolutionById(){
+	}
 
+	public function storeImages($data){
+		$dbconn = $this->dbConnect();
+
+		$query = "INSERT INTO imagesnipetts(imagename,solutionid,status,ref) VALUES $data";
+
+		$results = mysqli_query($dbconn, $query) or die("Error".mysqli_error($dbconn));
+
+		return $results;
+
+	}
+
+	public function getSolutionID($ref)
+	{
+		$dbconn = $this->dbConnect();
+		$reff = 'xgtf957e43slpkw1njvbziq82adcyor60mh';
+		$query = "SELECT id FROM solution WHERE ref='$ref'";
+		$res = mysqli_query($dbconn, $query) or die("Error".mysqli_error($dbconn));
+
+		$results = $res->fetch_assoc();
+
+		return $results;
 	}	
+	public function readSolutionById(){}	
 	public function editSolution(){}
 	public function search(){}
 
+//////////////////////////////////////////////////////////////////
+///////////////////////// SERVICES///////////////////////////////
+/// ////////////////////////////////////////////////////////////
 	//main service functions
 	public function createService($name, $description){
 		$dbconn = $this->dbConnect();
@@ -81,7 +107,9 @@ class LoggerImp implements Crud
 
 	public function editService(){}
 
-	//subservice functions
+	//////////////////////////////////////////////////////////////////
+	///////////////////////// SUB SERVICES ///////////////////////////////
+	/// ////////////////////////////////////////////////////////////
 	public function createSubService($name, $parentID, $description){
 		$dbconn = $this->dbConnect();
 
@@ -133,6 +161,10 @@ class LoggerImp implements Crud
 	}
 	public function editSubService(){}
 
+//////////////////////////////////////////////////////////////////
+///////////////////////// UTIL FUNCTIONS ///////////////////////////////
+/// ////////////////////////////////////////////////////////////
+/// 
 	public function dbConnect(){
 		$conn = new DBConnect;
 		$conn = $conn->connect;

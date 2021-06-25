@@ -2,11 +2,14 @@
 
 interface Crud {	
 	//solution functions
-	public function createSolution($title,$subid,$descrip,$slon);
+	public function createSolution($title,$subid,$descrip,$slon,$ref);
 	public function readAllSolutions();	
 	public function readSolutionById();	
 	public function editSolution();
 	public function search();
+	public function storeImages($data);
+	public function getSolutionID($ref);
+	
 
 	//main service functions
 	public function createService($name, $description);

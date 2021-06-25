@@ -1,27 +1,8 @@
 <?php
-  include 'controller/pagination.php';
-  $service = new Pagination('solution');
-  $conn = $service->dbConnect();
-
+  include 'controller/pagination.php';  
+  $service = new Pagination('solution'); 
   $pages  = $service->get_pagination_number();
-  
-  //var_dump($soln);
-
-  if (isset($_POST['new_solution'])) {
-      $title = mysqli_escape_string($conn, $_POST['title']);
-      $subserviceid = mysqli_escape_string($conn, $_POST['subservice_name']);
-      $problemDesc = mysqli_escape_string($conn, $_POST['description']);
-      $solution = mysqli_escape_string($conn, $_POST['solution']);
-
-      $results = $service->createSolution($title,$subserviceid,$problemDesc,$solution);
-      if ($results) {          
-        mysqli_close($conn);
-      }else{
-        echo "Failed";
-      } 
-      
-  }
- 
+  $ref = substr(str_shuffle("0123456789abcdefghijklmnopqrstvwxyz"), 0, 50);
 ?>
 <!DOCTYPE html>
 <html>
@@ -81,7 +62,18 @@
       <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+      <form class="form-inline" style="width: 90%;">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success float-end my-2 my-sm-0" type="submit">Search</button>
+      </form>
+      <!-- <form style="width: 90%;">
+        <div class="form-group" >
+          <input class="form-control" id="formGroupExampleInput" type="text" placeholder="Search" aria-label="Search">
+          <button type="button" class="btn btn-primary">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>        
+      </form> -->      
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
           <a class="nav-link" href="#">Sign out</a>
@@ -147,19 +139,17 @@
               $solutions = $service->get_data();  
               while ($row = mysqli_fetch_assoc($solutions)) {
                 $subservice = $service->getSubServiceName($row['subserviceid']);
+                if (empty($subservice["name"])) {
+                   $subservice["name"] = "UNKNOWN";
+                }
                 echo "<tr>";
                 echo "<td>".$row['title']."</td>";                
                 echo "<td>".$row['problemDescription']."</td>";
-                echo "<td>".$row['solution']."</td>";
+                echo "<td>".$row['providesolution']."</td>";
                 echo "<td>".$subservice['name']."</td>";
                 echo "<td><button class='btn btn-primary'>Details</button></td>";
                 echo "</tr>";
-              }
-              // foreach ($solutions as $solution) {
-              //   echo "<tr>";
-              //   echo "<td>".$solution['title']."</td>"; 
-              //   echo "</tr>";
-              // }
+              }             
             ?>  
           </tbody>
         </table>
@@ -176,13 +166,11 @@
                       ".$i."
                     </a>";
                 }
-              }
-            //echo "<a href='?page=$next'>&raquo;</a>";
+              }            
             echo "<a href='?page=$next'.''.$check>&raquo;</a>";
                 
           ?>  
-        </div>
-              
+        </div>             
       
     </main>
   </div>
@@ -198,7 +186,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="" method="POST">
+        <form action="controller/handlers/formSubmitHadler.php" method="POST" enctype="multipart/form-data">
           <div class="mb-3">
             <label for="recipient-name" class="col-form-label">Title:</label>
             <input type="text" class="form-control" id="title" name="title" required="">
@@ -207,13 +195,15 @@
             <label for="recipient-name" class="col-form-label">Service Name:</label>
             <select class="select" name="" id="service_name" required="">
               <option>- select -</option>
-               <?php                 
-                $result = $service->readAllServices();
-                while ($row = mysqli_fetch_assoc($result)) {
+              <?php
+                $results = $service->readAllServices();
+                while($row = mysqli_fetch_assoc($results)){
                   echo "<option value='".$row["id"]."'>".$row["name"]."</option>";
                 }
               ?>
+
             </select>
+           
           </div>
           <div class="mb-3">
             <label for="recipient-name" class="col-form-label">Sub Service Name:</label>
@@ -229,6 +219,15 @@
             <label for="message-text" class="col-form-label">Solution:</label>
             <textarea class="form-control" id="solution" name="solution" required=""></textarea>
           </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">Related Images:</label>
+            <div id="inputFormRow"> 
+            </div>
+
+            <div id="newRow"></div>
+            <button id="addRow" type="button" class="btn btn-info mt-3">Add Image</button>
+          </div>
+          <input type="text" hidden name="referenceNumber" value="<?php echo $ref ?>"/>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="submit" id="new_solution" name="new_solution" class="btn btn-primary">SUBMIT</button>
@@ -249,12 +248,33 @@
     <script type="text/javascript" src="./assets/customfiles/tabjs.js"></script>
     <script type="text/javascript">
       $(document).ready(function(){
+        var i = 0;
+        $("#addRow").click(function () {
+          i++;
+          var html = '';
+          html += '<div id="inputFormRow'+i+'">';
+          html += '<div class="input-group mb-3">';
+          html += '<input type="file" name="files[]" class="form-control m-input" autocomplete="off" multiple><br/>';
+          html += '<div class="input-group-append">';
+          html += '<button id="'+i+'" type="button" class="removeRow btn btn-danger">Remove</button>';
+          html += '</div>';
+          html += '</div>';
+
+           $('#newRow').append(html);
+        });
+
+         // remove row
+        $(document).on('click', '.removeRow', function () {
+          var buttonId  = $(this).attr("id");
+            $(this).closest('#inputFormRow'+buttonId+'').remove();
+        });
+
         $('#service_name').change(function(){
           var parentID = $(this).val();
           //console.log(parentID);
 
           $.ajax({
-            url: 'controller/subServiceHandler.php',
+            url: 'controller/handlers/subServiceHandler.php',
             type: 'post',
             data: { field1: parentID},
             dataType: 'json',

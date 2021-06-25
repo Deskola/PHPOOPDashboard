@@ -1,36 +1,7 @@
 <?php
-  include '../controller/loggerController.php';
-  $service = new LoggerImp();
-  $conn = $service->dbConnect();
-
-  if (isset($_POST['new_service'])) {
-    $name = mysqli_escape_string($conn, $_POST['service_name']);
-    $description = mysqli_escape_string($conn, $_POST['service_description']);
-    
-    $results = $service->createService($name, $description);
-    if ($results) {
-      
-      mysqli_close($conn);
-    }else{
-      echo "Failed";
-    }    
-  }
-
-  if (isset($_POST['sub_service'])) {
-    $name = mysqli_escape_string($conn, $_POST['subservice_name']);
-    $parentservice = mysqli_escape_string($conn, $_POST['parent_service']);
-    $description = mysqli_escape_string($conn, $_POST['service_description']);
-
-    //var_dump([$name, $parentservice ,$description ]);   
-    $results = $service->createSubService($name, $parentservice, $description);
-    if ($results) {      
-      mysqli_close($conn);
-    }else{
-      echo "<script>alert('Failed')</script>";
-    }    
-  }
-
-  
+  include '../controller/pagination.php';
+  $service = new Pagination('subservice');
+  $pages  = $service->get_pagination_number(); 
 ?>
 <!DOCTYPE html>
 <html>
@@ -40,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="../assets/customfiles/tabstyle.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/select2.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/customfiles/dashstyle.css">
+    <link rel="stylesheet" type="text/css" href="../assets/customfiles/snack.css">
     <title></title>
     <style>
       .bd-placeholder-img {
@@ -64,7 +36,54 @@
         word-wrap:break-word;
         width:100%; 
       }
+
+      /* Pagination links */
+      .pagination a {
+        color: black;
+        float: left;
+        padding: 8px 16px;
+        text-decoration: none;
+        transition: background-color .3s;
+      }
+
+      /* Style the active/current link */
+      .pagination a.active {
+        background-color: dodgerblue;
+        color: white;
+      }
+
+      /* Add a grey background color on mouse-over */
+      .pagination a:hover:not(.active) {background-color: #ddd;}
+
+      .alert {
+        padding: 20px;
+        background-color: #f44336;
+        color: white;
+      }
+
+      .closebtn {
+        margin-left: 15px;
+        color: white;
+        font-weight: bold;
+        float: right;
+        font-size: 22px;
+        line-height: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .closebtn:hover {
+        color: black;
+      }
     </style>
+     
+    <script type="text/javascript">
+      function myFunc() {
+        var x = document.getElementsByClassName("alertMsg");
+       //this.parentElement.style.display='none';
+       x.style.display='none';
+      }
+    </script>
 </head>
 <body>
     <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
@@ -153,8 +172,8 @@
           <tbody>
             <?php
               
-              $result = $service->readAllSubServices();
-              while ($row = mysqli_fetch_assoc($result)) {
+              $solutions = $service->get_data();
+              while ($row = mysqli_fetch_assoc($solutions)) {
                 $mainServiceName = $service->readServiceById($row['serviceId']);
                 //var_dump($mainServiceName);
                 echo "<tr>";             
@@ -167,16 +186,48 @@
             ?> 
           </tbody>
         </table>
+
+         <div class="pagination">
+          <?php
+            $prev = $service->prev_page();
+            $next = $service->next_page();
+            $check = $service->check_search();
+             echo "<a href='?page=$prev'.''.$check>&laquo;</a>";
+              for ($i=1; $i <= $pages; $i++) { 
+                if ($service->is_showable($i)) {
+                    $pagenum = $service->is_active_class($i);
+                    echo "<a class='$pagenum' href='?page=$i'.''.$check'>
+                      ".$i."
+                    </a>";
+                }
+              }            
+            echo "<a href='?page=$next'.''.$check>&raquo;</a>";
+                
+          ?>  
+        </div>
       </div>
-      
-
-      
-
-      
-      
-    </main>
+    </main>   
   </div>
 </div>
+
+ <?php
+    if (isset($_GET['msg'])) {
+      $message = $_GET['msg'];
+      // $none = 'none';
+      // echo "<div class='alertMsg alert'>";
+      // echo '<span class="closebtn" onclick="myFunc()">&times;</span>';
+      // echo "<strong>Danger!</strong>".$message;
+      // echo "</div>";
+      // echo "<div id='snackbar'>".$message."</div>";
+      // echo "<script type='text/javascript'>",           
+      //      "var x = document.getElementById('snackbar');"
+      //         "x.className = 'show';"
+      //         "setTimeout(function(){ x.className = x.className.replace('show', ''); }, 3000);"
+      //      "</script>";
+      // ;     
+    }
+  ?>
+
 
 <!-- New Service Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -187,14 +238,14 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="" method="POST">
+        <form action="../controller/handlers/formSubmitHadler.php" method="POST">
           <div class="mb-3">
             <label for="recipient-name" class="col-form-label">Service Name:</label>
-            <input type="text" class="form-control" id="service_name" name="service_name">
+            <input type="text" required=""  class="form-control" id="service_name" name="service_name">
           </div>
           <div class="mb-3">
             <label for="message-text" class="col-form-label">Description:</label>
-            <textarea class="form-control" id="service_description" name="service_description"></textarea>
+            <textarea class="form-control" required=""  id="service_description" name="service_description"></textarea>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -216,14 +267,14 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="" method="POST">
+        <form action="../controller/handlers/formSubmitHadler.php" method="POST">
           <div class="mb-3">
             <label for="recipient-name" class="col-form-label">Name:</label>
-            <input type="text" class="form-control" id="<!-- sub -->service_name" name="subservice_name">
+            <input type="text" required="" class="form-control" id="<!-- sub -->service_name" name="subservice_name">
           </div>
           <div class="mb-3">
             <label for="recipient-name" class="col-form-label">Parent Service:</label>
-            <select class="select" name="parent_service" id="parent_service" style="width: 100%;">
+            <select class="select" required=""  name="parent_service" id="parent_service" style="width: 100%;">
               <?php 
                 
                 $result = $service->readAllServices();
@@ -235,7 +286,7 @@
           </div>
           <div class="mb-3">
             <label for="message-text" class="col-form-label">Description:</label>
-            <textarea class="form-control" id="service_description" name="service_description"></textarea>
+            <textarea class="form-control" required=""  id="service_description" name="service_description"></textarea>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -258,6 +309,18 @@
     <script type="text/javascript" src="../assets/js/select2.min.js"></script>
     <script type="text/javascript" src="../assets/customfiles/tabjs.js"></script>
     <script type="text/javascript">
+       var snack = function() {
+        console.log("here");
+        // var x = document.getElementById("snackbar");
+        // x.className = "show";
+        // setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+      }
+
+      function jsfunction(){
+        console.log("here");
+      }
+    </script>
+    <script type="text/javascript">
 
       var exampleModal = document.getElementById('exampleModal')
       exampleModal.addEventListener('show.bs.modal', function (event) {
@@ -277,6 +340,7 @@
       });
 
       $("#parent_service").select2();
+     
     </script>
 
 
