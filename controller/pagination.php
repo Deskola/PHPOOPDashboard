@@ -6,7 +6,7 @@ include 'loggerController.php';
  */
 class Pagination extends LoggerImp
 {
-	private $table, $total_records, $limit = 5, $col;
+	private $table, $total_records, $limit = 6, $col;
 	
 	function __construct($table)
 	{

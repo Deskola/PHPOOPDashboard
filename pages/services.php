@@ -170,7 +170,7 @@
               <th>Service name</th>
               <th>Description</th>
               <th>Parent Service</th>              
-              <th>Actions</th>
+              <!-- <th>Actions</th> -->
             </tr>
           </thead>
           <tbody>
@@ -184,7 +184,7 @@
                 echo "<td>".$row["name"]."</td>";
                 echo "<td>".$row["description"]."</td>";
                  echo "<td>".$mainServiceName["name"]."</td>";   
-                echo "<td><button class='btn btn-primary'>Details</button></td>";  
+                // echo "<td><button class='btn btn-primary'>Details</button></td>";  
                 echo "</tr>";  
               }
             ?> 
