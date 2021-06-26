@@ -13,3 +13,14 @@ if (isset($_POST['field1'])) {
 	echo json_encode($data);
 }
 
+
+/////////////// //////////////////////////////////////////////
+/// //////  IMAGES AJAX REQUEST (searcResult.php) ////////////
+/// ////////////////////////////////////////////////  
+
+if (isset($_POST['field2'])) {
+	$recordId = mysqli_escape_string($conn, $_POST["field2"]);
+
+	$data = $service->get_images($recordId);
+	echo json_encode($data);
+}

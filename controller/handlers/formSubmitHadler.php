@@ -143,7 +143,27 @@
     }     
   }
 
-/////////////// //////////////////////////////////////////////
+  /////////////// //////////////////////////////////////////////
+  /// //////  SEARCH functions ////////////////////////////
+  /// ////////////////////////////////////////////////
+  ///
+
+  // if (isset($_POST['seach_btn'])) {
+  //   $searchWord = mysqli_escape_string($conn, $_POST['solution_search']);
+
+  //   //var_dump([$name, $parentservice ,$description ]);   
+  //   $results = $service->search($searchWord);
+  //   if ($results) {
+  //     $statusMsg = "Operation Successful ";
+  //     $url = "Location: ../../pages/services.php?successmsg=$statusMsg";
+  //     redirectWithMsag($url);
+  //   }else{
+  //     $statusMsg = "Operation Failed ";
+  //     $url = "Location: ../../pages/services.php?errmsg=$statusMsg";
+  //     redirectWithMsag($url);
+  //   } 
+  // }
+  /////////////// //////////////////////////////////////////////
   /// //////  UTIL functions ////////////////////////////
   /// ////////////////////////////////////////////////
   ///
@@ -152,3 +172,5 @@
     mysqli_close($conn);
     exit();
   }
+
+  

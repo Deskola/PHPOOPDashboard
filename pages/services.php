@@ -7,8 +7,7 @@
 <html>
 <head>
     <title>Home</title>
-    <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../assets/customfiles/tabstyle.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.min.css">    
     <link rel="stylesheet" type="text/css" href="../assets/css/select2.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/customfiles/dashstyle.css">
     <link rel="stylesheet" type="text/css" href="../assets/customfiles/snack.css">
@@ -91,7 +90,12 @@
       <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+      <form class="form-inline" style="width: 90%; display: flex;" action="searchResults.php" method="POST">
+        <input class="form-control mr-sm-2" type="search" name="solution_search" placeholder="Search" aria-label="Search">
+        <button class="btn bg-light float-end my-2 my-sm-0" name="seach_btn" type="submit" style="border-radius: 0 0 0 0;">
+          <img src="../assets/images/search.png" alt="Search" width="30" height="30">
+        </button>
+      </form>
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
           <a class="nav-link" href="#">Sign out</a>
@@ -306,8 +310,7 @@
     <script type="text/javascript" src="../assets/js/bootstrap.js"></script> 
     <script type="text/javascript" src="../assets/js/bootstrap.bundle.min.js"></script>  
     <script type="text/javascript" src="../assets/js/jquery-3.5.1.min.js"></script>
-    <script type="text/javascript" src="../assets/js/select2.min.js"></script>
-    <script type="text/javascript" src="../assets/customfiles/tabjs.js"></script>
+    <script type="text/javascript" src="../assets/js/select2.min.js"></script>    
     <script type="text/javascript">
        var snack = function() {
         console.log("here");

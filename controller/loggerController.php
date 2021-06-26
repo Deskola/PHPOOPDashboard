@@ -58,7 +58,7 @@ class LoggerImp implements Crud
 	public function getSolutionID($ref)
 	{
 		$dbconn = $this->dbConnect();
-		$reff = 'xgtf957e43slpkw1njvbziq82adcyor60mh';
+		//$reff = 'xgtf957e43slpkw1njvbziq82adcyor60mh';
 		$query = "SELECT id FROM solution WHERE ref='$ref'";
 		$res = mysqli_query($dbconn, $query) or die("Error".mysqli_error($dbconn));
 
@@ -66,9 +66,42 @@ class LoggerImp implements Crud
 
 		return $results;
 	}	
+	
+	public function search($search_word){
+		$dbconn = $this->dbConnect();
+
+		$query = "SELECT * FROM solution WHERE title LIKE '%$search_word%' OR problemDescription LIKE '%$search_word%'
+		 OR providesolution LIKE '%$search_word%'";
+
+		$results = mysqli_query($dbconn, $query) or die("Error".mysqli_error($dbconn));
+
+		//$results = $res->fetch_assoc();
+
+		return $results;
+
+	}
+
+	public function get_images($id){
+		$dbconn = $this->dbConnect();
+
+		$query = "SELECT * FROM imagesnipetts WHERE solutionid='$id'";
+		$results = mysqli_query($dbconn, $query) or die("Error".mysqli_error($dbconn));
+
+		//$results = $res->fetch_assoc();	
+
+		$images_arr = array();
+		while ($row = mysqli_fetch_assoc($results)) {
+			$images_arr[] = array(
+				'id' => $row["id"], 
+				'name' => $row["imagename"]
+			);
+		}		
+
+		return $images_arr;
+	}
+
 	public function readSolutionById(){}	
 	public function editSolution(){}
-	public function search(){}
 
 //////////////////////////////////////////////////////////////////
 ///////////////////////// SERVICES///////////////////////////////

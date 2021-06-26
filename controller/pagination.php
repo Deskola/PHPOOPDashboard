@@ -53,17 +53,31 @@ class Pagination extends LoggerImp
 			// $query  = "SELECT id FROM $this->table WHERE username LIKE '%$val%' $start, $this->limit";
 			$query  = "SELECT id FROM $this->table WHERE $this->col LIKE '%$val%' $start, $this->limit";
 		}
-		// $stmt->execute();
-
-		// //grab a result set
-		// $resultSet = $stmt->get_result();
-
-		//pull all results as an associative array
-		//return $results->fetch_all();
-		//$results = $results->fetch_assoc();
+		
 		return $results;
 		 
 	}
+
+	// public function get_searched_data(){
+	// 	$start = 0;
+	// 	if ($this->current_page() > 1) {
+	// 		$start = ($this->current_page() * $this->limit) - $this->limit;
+	// 	}
+
+	// 	// $conn = $this->dbConnect();
+
+
+	// 	// $stmt = "SELECT * FROM $this->table LIMIT $start, $this->limit";
+	// 	// $results = mysqli_query($conn, $stmt);
+
+	// 	// if($this->is_search()){
+	// 	// 	$val 	= $this->is_search();
+	// 	// 	// $query  = "SELECT id FROM $this->table WHERE username LIKE '%$val%' $start, $this->limit";
+	// 	// 	$query  = "SELECT id FROM $this->table WHERE $this->col LIKE '%$val%' $start, $this->limit";
+	// 	// }
+		
+	// 	return $this->search;
+	// }
 
 	public function check_search(){
 		if($this->is_search()){

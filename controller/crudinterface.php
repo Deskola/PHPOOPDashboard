@@ -6,7 +6,7 @@ interface Crud {
 	public function readAllSolutions();	
 	public function readSolutionById();	
 	public function editSolution();
-	public function search();
+	public function search($search_word);
 	public function storeImages($data);
 	public function getSolutionID($ref);
 	
