@@ -198,7 +198,7 @@
 <!-- ================================================================================================================ -->
 <!-- New Service Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">New Solution</h5>
@@ -212,7 +212,7 @@
           </div>
           <div class="mb-3">
             <label for="recipient-name" class="col-form-label">Service Name:</label>
-            <select class="select" name="" id="service_name" required="">
+            <select class="select" name="" id="service_name" required="" style="width:100%">
               <option>- select -</option>
               <?php
                 $results = $service->readAllServices();
@@ -226,7 +226,7 @@
           </div>
           <div class="mb-3">
             <label for="recipient-name" class="col-form-label">Sub Service Name:</label>
-            <select class="select" name="subservice_name" id="subservice_name" required="">
+            <select class="select" name="subservice_name" id="subservice_name" required="" style="width:100%">
                 <option>- select -</option>
             </select>
           </div>
@@ -262,7 +262,7 @@
 <!-- ================================================================================================================ -->
 <!-- Details Service Modal -->
 <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Details</h5>
@@ -344,7 +344,7 @@
           //console.log(parentID);
 
           $.ajax({
-            url: 'controller/handlers/ajaxHandler.php.php',
+            url: 'controller/handlers/ajaxHandler.php',
             type: 'post',
             data: { field1: parentID},
             dataType: 'json',
